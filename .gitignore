@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+
+# Swift build artifacts
+vm-helper/.build/
+vm-helper/*.resolved
+
+# Downloaded VM images (large binaries — run prepare_image.sh to generate)
+images/
+
+# VM runtime data
+~/.vm-mcp/
