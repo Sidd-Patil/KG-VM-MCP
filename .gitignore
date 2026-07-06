@@ -1,6 +1,11 @@
 # macOS
 .DS_Store
 
+# Environment / secrets (never commit API keys)
+.env
+.env.*
+agent/.env
+
 # Swift build artifacts
 vm-helper/.build/
 vm-helper/*.resolved

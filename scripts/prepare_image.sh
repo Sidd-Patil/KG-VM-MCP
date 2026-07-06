@@ -83,28 +83,16 @@ EOF
 # vendor-data must exist for NoCloud; empty is fine
 touch "$CIDATA_DIR/vendor-data"
 
-# Create seed ISO via FAT32 DMG → UDTO conversion.
-# hdiutil makehybrid produces a hybrid HFS+/ISO image where the HFS layer
-# can shadow the cidata volume label that cloud-init looks for. The FAT32
-# DMG → UDTO path reliably produces a plain FAT32 volume labeled "cidata".
+# Create seed ISO using hdiutil makehybrid.
+# Produces an ISO 9660 volume labeled "cidata" — cloud-init's NoCloud data
+# source finds it by that label. Linux VMs don't mount HFS+, so the hybrid
+# layer is harmless.
 echo "Building seed ISO..."
-TEMP_DMG="$IMAGES_DIR/.seed-tmp.dmg"
-rm -f "$TEMP_DMG"
-
-hdiutil create -size 1m -fs FAT32 -volname cidata -layout NONE -o "$TEMP_DMG"
-
-MOUNT_POINT=$(hdiutil attach "$TEMP_DMG" -nobrowse -noautoopen | \
-    awk '/\/Volumes/ { print $NF }')
-
-cp "$CIDATA_DIR/user-data"   "$MOUNT_POINT/user-data"
-cp "$CIDATA_DIR/meta-data"   "$MOUNT_POINT/meta-data"
-cp "$CIDATA_DIR/vendor-data" "$MOUNT_POINT/vendor-data"
-
-hdiutil detach "$MOUNT_POINT" -quiet
-
-hdiutil convert "$TEMP_DMG" -format UDTO -o "${SEED_ISO%.iso}"
-mv "${SEED_ISO%.iso}.cdr" "$SEED_ISO"
-rm -f "$TEMP_DMG"
+hdiutil makehybrid -quiet \
+    -o "$SEED_ISO" \
+    -joliet -iso \
+    -default-volume-name cidata \
+    "$CIDATA_DIR"
 
 echo ""
 echo "Done! Files in $IMAGES_DIR:"
