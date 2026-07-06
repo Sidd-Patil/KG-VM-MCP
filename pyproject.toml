@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vm-mcp"
+version = "0.1.0"
+description = "Spin up and control macOS VMs with a single natural-language prompt"
+requires-python = ">=3.11"
+dependencies = [
+    "google-adk>=1.0.0",
+    "google-genai>=1.0.0",
+    "mcp[cli]>=1.0.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.scripts]
+vm-agent = "agent.skill:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["agent"]
