@@ -142,6 +142,19 @@ func startVM(name: String) {
         }
     }
 
+    // Intercept SIGTERM so Virtualization.framework can cleanly tear down
+    // the XPC hypervisor service before this process exits. Without this,
+    // the XPC process lingers in memory after stopVM sends SIGTERM.
+    signal(SIGTERM, SIG_IGN)
+    let sigSource = DispatchSource.makeSignalSource(signal: SIGTERM, queue: .main)
+    sigSource.setEventHandler {
+        vm.stop { _ in
+            delegate.markStopped()
+            exit(0)
+        }
+    }
+    sigSource.resume()
+
     // RunLoop is required — Virtualization.framework callbacks run on main thread
     RunLoop.main.run()
 }
@@ -204,7 +217,7 @@ class VMDelegate: NSObject, VZVirtualMachineDelegate {
         exit(0)
     }
 
-    private func markStopped() {
+    func markStopped() {
         clearPID(name: name)
         if var config = try? loadConfig(name: name) {
             config.state = .stopped

@@ -23,12 +23,14 @@ error and suggest a fix.
 
 VMs use NAT networking (internet access, not host-reachable by IP).
 Commands run via virtio serial console — no SSH needed.
-Use timeout=120 for the first run_command_in_vm call after start_vm,
-since cloud-init on first boot takes 60-90 seconds.
+After calling start_vm, poll vm_status every 10 seconds until state is
+'running' before attempting run_command_in_vm. Use timeout=120 for the
+first run_command_in_vm call after start_vm, since cloud-init on first
+boot takes 60-90 seconds.
 """.strip()
 
 root_agent = LlmAgent(
-    model="gemini-2.0-flash",
+    model="gemini-flash-lite-latest",
     name="vm_agent",
     instruction=SYSTEM_PROMPT,
     tools=[
@@ -37,7 +39,8 @@ root_agent = LlmAgent(
                 server_params=StdioServerParameters(
                     command="python",
                     args=[str(_MCP_SERVER)],
-                )
+                ),
+                timeout=600.0,
             )
         )
     ],
