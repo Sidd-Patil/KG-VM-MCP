@@ -1217,6 +1217,7 @@ dependencies = [
     { name = "google-adk" },
     { name = "google-genai" },
     { name = "mcp", extra = ["cli"] },
+    { name = "python-dotenv" },
 ]
 
 [package.metadata]
@@ -1224,6 +1225,7 @@ requires-dist = [
     { name = "google-adk", specifier = ">=1.0.0" },
     { name = "google-genai", specifier = ">=1.0.0" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.0.0" },
+    { name = "python-dotenv", specifier = ">=1.0.0" },
 ]
 
 [[package]]
