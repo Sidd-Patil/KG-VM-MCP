@@ -30,7 +30,7 @@ boot takes 60-90 seconds.
 """.strip()
 
 root_agent = LlmAgent(
-    model="gemini-flash-lite-latest",
+    model="gemini-3.1-flash-lite",
     name="vm_agent",
     instruction=SYSTEM_PROMPT,
     tools=[
